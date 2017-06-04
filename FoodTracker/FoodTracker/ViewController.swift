@@ -20,9 +20,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         nameTextField.delegate = self
     }
     // MARK: Actions
-    @IBAction func setDefaultLabelText(_ sender: UIButton) {
-        mealNameLabel.text = "デフォルトテキスト"
-    }
     
     //画像選択画面に遷移する処理
     @IBAction func selectImageFromPhotoLibrary(_ sender: UITapGestureRecognizer) {
