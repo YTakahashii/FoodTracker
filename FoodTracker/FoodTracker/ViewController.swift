@@ -20,9 +20,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         nameTextField.delegate = self
     }
     // MARK: Actions
-    @IBAction func setDefaultLabelText(_ sender: UIButton) {
-        mealNameLabel.text = "デフォルトテキスト"
-    }
     
     //画像選択画面に遷移する処理
     @IBAction func selectImageFromPhotoLibrary(_ sender: UITapGestureRecognizer) {
@@ -33,7 +30,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         present(imagePickerController, animated: true, completion: nil)
     }
     
-    // MARK: UITextFieldDelegateで指定されたメソッド
+    // MARK: UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // Doneを押すとキーボードが閉じる処理
         textField.resignFirstResponder()
@@ -54,15 +51,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     //ユーザーが写真を選択すると呼び出される。選択した画像をimageViewに表示する
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        // The info dictionary may contain multiple representations of the image. You want to use the original.
         guard let selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
-        
-        // Set photoImageView to display the selected image.
+
         photoImageView.image = selectedImage
         
-        // Dismiss the picker.
         dismiss(animated: true, completion: nil)
     }
 
