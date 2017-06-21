@@ -72,7 +72,7 @@
                     <navigationItem key="navigationItem" title="New Meal" id="NjK-e0-Bi8">
                         <barButtonItem key="leftBarButtonItem" style="done" systemItem="cancel" id="gso-H2-6Ev">
                             <connections>
-                                <action selector="cancel:" destination="BYZ-38-t0r" id="m2Z-CA-0el"/>
+                                <action selector="cancel:" destination="BYZ-38-t0r" id="fbX-G6-Zb1"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="save" id="vaO-41-Gsv">
@@ -82,7 +82,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="cancelButton" destination="gso-H2-6Ev" id="h5l-07-OfS"/>
                         <outlet property="nameTextField" destination="j9C-KO-UAc" id="4vN-QJ-NcZ"/>
                         <outlet property="photoImageView" destination="6Mv-HR-rNN" id="mRJ-hH-B9D"/>
                         <outlet property="ratingControl" destination="ogX-GV-UUq" id="cBg-O8-f9W"/>

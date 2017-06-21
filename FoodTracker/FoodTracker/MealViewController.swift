@@ -33,6 +33,9 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)
     }
+    @IBAction func cancel(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
     //MARK: Private Methods
     private func updateSaveButtonState() {
         //テキストフィールドがからのときSaveボタンを無効化する
