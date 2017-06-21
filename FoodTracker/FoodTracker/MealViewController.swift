@@ -7,16 +7,21 @@
 //
 
 import UIKit
+import os.log
 
 class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: Properties
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var photoImageView: UIImageView!
+    @IBOutlet weak var ratingControl: RatingControl!
+    @IBOutlet weak var saveButton: UIBarButtonItem!
     
+    var meal: Meal?
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         nameTextField.delegate = self
+        updateSaveButtonState()
     }
     // MARK: Actions
     
@@ -28,7 +33,15 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)
     }
-    
+    @IBAction func cancel(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    //MARK: Private Methods
+    private func updateSaveButtonState() {
+        //テキストフィールドがからのときSaveボタンを無効化する
+        let text = nameTextField.text ?? ""
+        saveButton.isEnabled = !text.isEmpty
+    }
     // MARK: UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // Doneを押すとキーボードが閉じる処理
@@ -37,7 +50,14 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        //テキストボックスに値を入れ終わったときにラベルに値を渡す
+        //テキストボックスに値を入れ終わったときに
+        updateSaveButtonState()
+        navigationItem.title = textField.text
+    }
+    
+    //テキスト編集してるとき
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        saveButton.isEnabled = false //Saveボタンを無効にする
     }
     
     //MARK: UIImagePickerControllerDelegate
@@ -57,6 +77,20 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         
         dismiss(animated: true, completion: nil)
     }
+    
+    //MARK: Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        guard  let button = sender as? UIBarButtonItem, button === saveButton else {
+            os_log("Saveボタンは押されていません。キャンセルされました。", log: OSLog.default, type: .debug)
+            return
+        }
+        
+        let name = nameTextField.text ?? ""
+        let photo = photoImageView.image
+        let rating = ratingControl.rating
+        
+        meal = Meal(name: name, photo: photo, rating: rating)
+    }
 
 }
-
