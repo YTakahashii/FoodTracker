@@ -21,6 +21,13 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         nameTextField.delegate = self
+        
+        if let meal = meal{
+            navigationItem.title = meal.name
+            nameTextField.text = meal.name
+            photoImageView.image = meal.photo
+            ratingControl.rating = meal.rating
+        }
         updateSaveButtonState()
     }
     // MARK: Actions
@@ -34,7 +41,16 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         present(imagePickerController, animated: true, completion: nil)
     }
     @IBAction func cancel(_ sender: UIBarButtonItem) {
-        self.dismiss(animated: true, completion: nil)
+        let isPresentingInAddMealMode = presentingViewController is UINavigationController
+        
+        if isPresentingInAddMealMode {
+            self.dismiss(animated: true, completion: nil)
+        }else if let owningNavigationController = navigationController {
+            owningNavigationController.popViewController(animated: true)
+        }else{
+            fatalError("")
+        }
+        
     }
     //MARK: Private Methods
     private func updateSaveButtonState() {
