@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os.log
 
 class MealTableViewController: UITableViewController {
     //MARK: Properties
@@ -15,8 +16,13 @@ class MealTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //編集ビヘイビアが組み込まれた特殊なバーボタンを追加
+        navigationItem.leftBarButtonItem = editButtonItem
+        
         //サンプルデータをロード
         loadSampleMeals()
+        
+        //
     }
 
     override func didReceiveMemoryWarning() {
@@ -75,10 +81,19 @@ class MealTableViewController: UITableViewController {
     
     //MARK: Actions
     @IBAction func unwindToMealList(sender: UIStoryboardSegue){
+
         if let sourceViewController = sender.source as? MealViewController, let meal = sourceViewController.meal {
-            let newIndexPath = IndexPath(row: meals.count, section: 0)
-            meals.append(meal)
-            tableView.insertRows(at: [newIndexPath], with: .automatic)
+            //既存の食事を選択したら
+            if let selectedIndexPath = tableView.indexPathForSelectedRow{
+                //更新
+                meals[selectedIndexPath.row] = meal
+                tableView.reloadRows(at: [selectedIndexPath], with: .none)
+            }else{
+                //新しく追加
+                let newIndexPath = IndexPath(row: meals.count, section: 0)
+                meals.append(meal)
+                tableView.insertRows(at: [newIndexPath], with: .automatic)
+            }
         }
     }
     /*
@@ -91,25 +106,26 @@ class MealTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
+    
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            meals.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
 
     /*
     // Override to support rearranging the table view.
@@ -126,14 +142,29 @@ class MealTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        super.prepare(for: segue, sender: sender)
+        switch(segue.identifier ?? ""){
+            case "AddItem":
+                os_log("食事追加画面", log: OSLog.default, type: .debug)
+            case "ShowDetail":
+                guard  let mealDetailViewController = segue.destination as? MealViewController else {
+                    fatalError("予期せぬ遷移先です：\(segue.destination)")
+                }
+                guard  let selectedMealCell = sender as? MealTableViewCell else {
+                    fatalError("予期せぬ送り先です")
+                }
+                guard let indexPath = tableView.indexPath(for: selectedMealCell) else {
+                    fatalError("予期せぬ選択セルです")
+                }
+                let selectedMeal = meals[indexPath.row]
+                mealDetailViewController.meal = selectedMeal
+            default:
+                fatalError("予期せぬセグエです")
+        }
     }
-    */
-
 }
