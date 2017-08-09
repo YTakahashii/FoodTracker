@@ -19,10 +19,13 @@ class MealTableViewController: UITableViewController {
         //編集ビヘイビアが組み込まれた特殊なバーボタンを追加
         navigationItem.leftBarButtonItem = editButtonItem
         
-        //サンプルデータをロード
-        loadSampleMeals()
-        
-        //
+        //保存されいる食べ物を読み込む
+        if let saveMeals = loadMeals() {
+            meals += saveMeals
+        }else {
+            //サンプルデータをロード
+            loadSampleMeals()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -58,6 +61,19 @@ class MealTableViewController: UITableViewController {
     }
 
     //MARK: Private Methods
+    private func saveMeals() {
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(meals, toFile: Meal.ArchiveURL.path)
+        if isSuccessfulSave {
+            os_log("正しく保存されました。", log: OSLog.default, type: .debug)
+        } else {
+            os_log("保存に失敗しました。", log: OSLog.default, type: .error)
+        }
+    }
+    
+    private func loadMeals() -> [Meal]? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: Meal.ArchiveURL.path) as? [Meal]
+    }
+    
     private func loadSampleMeals() {
         let photo1 = UIImage(named: "meal1")
         let photo2 = UIImage(named: "meal2")
@@ -94,8 +110,11 @@ class MealTableViewController: UITableViewController {
                 meals.append(meal)
                 tableView.insertRows(at: [newIndexPath], with: .automatic)
             }
+            //Save
+            saveMeals()
         }
     }
+    
     /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
@@ -120,6 +139,7 @@ class MealTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             meals.remove(at: indexPath.row)
+            saveMeals()
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
